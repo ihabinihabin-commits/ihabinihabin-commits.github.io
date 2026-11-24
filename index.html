@@ -3,15 +3,292 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>이담비</title>
+  <meta name="theme-color" content="#080b08" />
+  <title>이담비 :: 숨겨진 링크 디렉터리</title>
   <style>
-    body { font-family: sans-serif; max-width: 480px; margin: 40px auto; padding: 0 16px; text-align: center; }
-    a { display: block; margin: 12px 0; padding: 14px; border: 1px solid #ddd; border-radius: 8px; text-decoration: none; color: #111; }
+    :root {
+      color-scheme: dark;
+      --bg: #080b08;
+      --panel: #101510;
+      --line: #334433;
+      --green: #9dff9d;
+      --dim: #88a188;
+      --amber: #ffd36a;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: #d3e2d3;
+      font: 15px/1.65 "Courier New", Courier, monospace;
+      text-shadow: 0 0 5px #69ff6922;
+    }
+    a { color: var(--green); }
+    a:hover { color: #fff; background: #193019; }
+    button, input { font: inherit; }
+    button {
+      color: var(--green);
+      background: #0c110c;
+      border: 1px solid #547254;
+      padding: 7px 11px;
+      cursor: pointer;
+    }
+    button:hover { color: #080b08; background: var(--green); }
+    :focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+
+    .page { width: min(940px, calc(100% - 28px)); margin: 24px auto 40px; }
+    .topline {
+      display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+      padding: 7px 10px; border: 1px solid var(--line); color: var(--dim); font-size: 12px;
+    }
+    .masthead {
+      padding: 26px 18px 20px; text-align: center;
+      border: 1px solid var(--line); border-top: 0;
+      background: radial-gradient(ellipse at center, #172317 0%, #0c100c 72%);
+    }
+    .sigil { color: var(--amber); font-size: 12px; letter-spacing: .22em; }
+    h1 { margin: 8px 0 0; color: var(--green); font-size: clamp(26px, 6vw, 42px); line-height: 1.15; }
+    .subtitle { margin: 8px 0 0; color: var(--dim); }
+    .ticker {
+      overflow: hidden; white-space: nowrap; border: 1px solid var(--line); border-top: 0;
+      padding: 5px 10px; color: var(--amber); font-size: 12px;
+    }
+    .ticker span { display: inline-block; animation: crawl 24s linear infinite; }
+    @keyframes crawl { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
+    @media (prefers-reduced-motion: reduce) { .ticker span { animation: none; } }
+
+    .toolbar {
+      display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;
+      margin: 14px 0; padding: 10px; border: 1px dashed var(--line); color: var(--dim); font-size: 12px;
+    }
+    .toolbar-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1fr) 230px; gap: 14px; }
+    .panel { border: 1px solid var(--line); background: var(--panel); padding: 17px; }
+    .panel h2 { margin: 0 0 10px; color: var(--amber); font-size: 16px; }
+    .intro { color: #c3d3c3; }
+    .link-list { list-style: none; padding: 0; margin: 15px 0 0; }
+    .link-item { margin: 9px 0; padding: 10px 11px; border: 1px solid #263626; background: #0a0e0a; }
+    .link-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .link-label { color: var(--green); font-weight: bold; text-decoration: none; }
+    .link-arrow { color: var(--dim); }
+    .url-editor { display: none; margin-top: 9px; }
+    .editing .url-editor { display: block; }
+    .url-editor label { display: block; margin-bottom: 4px; color: var(--dim); font-size: 12px; }
+    .url-input {
+      width: 100%; padding: 7px; color: #e6f4e6; background: #050705; border: 1px solid #526652;
+    }
+    .remove-link { display: none; padding: 3px 7px; color: #ff9a9a; border-color: #784848; font-size: 12px; }
+    .editing .remove-link { display: inline-block; }
+    .side-note { color: var(--dim); font-size: 12px; }
+    .side-note strong { color: var(--green); }
+    .footer { margin-top: 14px; padding: 12px; text-align: center; color: var(--dim); border: 1px solid var(--line); font-size: 12px; }
+    .editable[contenteditable="true"] { outline: 1px dashed var(--amber); outline-offset: 3px; cursor: text; }
+    .editing .edit-hint { display: block; }
+    .edit-hint { display: none; color: var(--amber); font-size: 12px; }
+    .save-status { min-height: 1.5em; color: var(--green); }
+
+    @media (max-width: 680px) {
+      .layout { grid-template-columns: 1fr; }
+      .page { margin-top: 12px; }
+      .toolbar { align-items: flex-start; }
+    }
   </style>
 </head>
 <body>
-  <h1>이담비</h1>
-  <a href="https://example.com" target="_blank" rel="noopener noreferrer">첫 번째 링크</a>
-  <a href="https://example.org" target="_blank" rel="noopener noreferrer">두 번째 링크</a>
+  <div class="page" id="site">
+    <div class="topline" aria-label="사이트 상태">
+      <span>[ 접속 노드: 로컬 아카이브 ]</span>
+      <span>보안 연결 대기중 // 2004–∞</span>
+    </div>
+
+    <header class="masthead">
+      <div class="sigil">[ 비공개 디렉터리 · 접속 환영 ]</div>
+      <h1 class="editable" data-field="title" contenteditable="false" spellcheck="false">이담비</h1>
+      <p class="subtitle editable" data-field="subtitle" contenteditable="false" spellcheck="false">조용히 모아 둔 작은 인터넷의 입구</p>
+    </header>
+
+    <div class="ticker" aria-hidden="true"><span>*** 낡은 화면, 초록 글자, 그리고 어딘가로 이어지는 링크들 *** 천천히 둘러보세요 ***</span></div>
+
+    <section class="toolbar" aria-label="사이트 편집 도구">
+      <div>
+        <div id="mode-message">읽기 전용 보기</div>
+        <div class="edit-hint">텍스트를 클릭해 수정하세요. 링크 주소는 아래 입력칸에서 바꿀 수 있습니다.</div>
+        <div class="save-status" id="save-status" aria-live="polite"></div>
+      </div>
+      <div class="toolbar-actions">
+        <button type="button" id="toggle-edit">편집 모드 켜기</button>
+        <button type="button" id="add-link" hidden>＋ 링크 추가</button>
+        <button type="button" id="reset-site" title="이 브라우저에 저장된 편집 내용을 지웁니다">초기화</button>
+      </div>
+    </section>
+
+    <main class="layout">
+      <section class="panel">
+        <h2 class="editable" data-field="sectionTitle" contenteditable="false" spellcheck="false">:: 링크 모음</h2>
+        <p class="intro editable" data-field="intro" contenteditable="false" spellcheck="false">이곳은 즐겨찾는 페이지를 모아 둔 개인 디렉터리입니다. 편집 모드를 켜면 페이지의 문구와 링크를 직접 바꿀 수 있어요.</p>
+        <ul class="link-list" id="link-list"></ul>
+      </section>
+
+      <aside class="panel">
+        <h2 class="editable" data-field="sideTitle" contenteditable="false" spellcheck="false">:: 안내</h2>
+        <p class="side-note editable" data-field="sideText" contenteditable="false" spellcheck="false">낯선 링크는 방문 전에 주소를 확인하세요.<br /><br /><strong>접속 상태:</strong> 기록 중<br /><strong>디렉터리:</strong> 공개</p>
+      </aside>
+    </main>
+
+    <footer class="footer editable" data-field="footer" contenteditable="false" spellcheck="false">© 이담비 · 이 페이지의 내용은 이 브라우저에 저장됩니다 · 마지막으로 방문해 주셔서 감사합니다.</footer>
+  </div>
+
+  <script>
+    (() => {
+      const STORAGE_KEY = 'deep-directory-site-v1';
+      const defaults = {
+        title: '이담비',
+        subtitle: '조용히 모아 둔 작은 인터넷의 입구',
+        sectionTitle: ':: 링크 모음',
+        intro: '이곳은 즐겨찾는 페이지를 모아 둔 개인 디렉터리입니다. 편집 모드를 켜면 페이지의 문구와 링크를 직접 바꿀 수 있어요.',
+        sideTitle: ':: 안내',
+        sideText: '낯선 링크는 방문 전에 주소를 확인하세요.<br /><br /><strong>접속 상태:</strong> 기록 중<br /><strong>디렉터리:</strong> 공개',
+        footer: '© 이담비 · 이 페이지의 내용은 이 브라우저에 저장됩니다 · 마지막으로 방문해 주셔서 감사합니다.',
+        links: [
+          { text: '첫 번째 링크', url: 'https://example.com' },
+          { text: '두 번째 링크', url: 'https://example.org' }
+        ]
+      };
+      const site = document.getElementById('site');
+      const list = document.getElementById('link-list');
+      const editButton = document.getElementById('toggle-edit');
+      const addButton = document.getElementById('add-link');
+      const status = document.getElementById('save-status');
+      let editing = false;
+      let saveTimer;
+
+      function safeUrl(value) {
+        const url = value.trim();
+        if (/^(https?:|mailto:|tel:)/i.test(url) || /^(\/|#|\.\/|\.\.\/)/.test(url)) return url;
+        return '#';
+      }
+
+      function currentData() {
+        const data = {};
+        document.querySelectorAll('[data-field]').forEach((el) => {
+          data[el.dataset.field] = el.innerHTML;
+        });
+        data.links = Array.from(list.querySelectorAll('.link-item')).map((item) => ({
+          text: item.querySelector('.link-label').innerHTML,
+          url: item.querySelector('.url-input').value
+        }));
+        return data;
+      }
+
+      function save() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(currentData()));
+          status.textContent = '저장됨';
+          clearTimeout(saveTimer);
+          saveTimer = setTimeout(() => { status.textContent = ''; }, 1800);
+        } catch (error) {
+          status.textContent = '저장할 수 없습니다. 브라우저 저장 공간을 확인해 주세요.';
+        }
+      }
+
+      function makeLink(link, index) {
+        const item = document.createElement('li');
+        item.className = 'link-item';
+        const row = document.createElement('div');
+        row.className = 'link-row';
+        const anchor = document.createElement('a');
+        anchor.className = 'link-label editable';
+        anchor.contentEditable = String(editing);
+        anchor.spellcheck = false;
+        anchor.innerHTML = link.text || '새 링크';
+        anchor.href = safeUrl(link.url || '#');
+        anchor.target = '_blank';
+        anchor.rel = 'noopener noreferrer';
+        anchor.addEventListener('click', (event) => {
+          if (editing) event.preventDefault();
+        });
+        const arrow = document.createElement('span');
+        arrow.className = 'link-arrow';
+        arrow.textContent = '↗';
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.className = 'remove-link';
+        remove.textContent = '삭제';
+        remove.setAttribute('aria-label', `링크 ${index + 1} 삭제`);
+        remove.addEventListener('click', () => { item.remove(); save(); });
+        row.append(anchor, arrow, remove);
+
+        const editor = document.createElement('div');
+        editor.className = 'url-editor';
+        const label = document.createElement('label');
+        label.textContent = '링크 주소';
+        const input = document.createElement('input');
+        input.className = 'url-input';
+        input.type = 'url';
+        input.placeholder = 'https://example.com';
+        input.value = link.url || '';
+        input.addEventListener('input', () => {
+          anchor.href = safeUrl(input.value);
+          save();
+        });
+        label.append(input);
+        editor.append(label);
+        item.append(row, editor);
+        anchor.addEventListener('input', save);
+        return item;
+      }
+
+      function renderLinks(links) {
+        list.replaceChildren(...links.map(makeLink));
+      }
+
+      function applyData(data) {
+        document.querySelectorAll('[data-field]').forEach((el) => {
+          const value = data[el.dataset.field];
+          if (typeof value === 'string') el.innerHTML = value;
+        });
+        document.title = (document.querySelector('[data-field="title"]').textContent.trim() || '링크 디렉터리') + ' :: 숨겨진 링크 디렉터리';
+        renderLinks(Array.isArray(data.links) ? data.links : defaults.links);
+      }
+
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        applyData(saved ? { ...defaults, ...JSON.parse(saved) } : defaults);
+      } catch (error) {
+        applyData(defaults);
+      }
+
+      document.querySelectorAll('[data-field]').forEach((el) => el.addEventListener('input', () => {
+        if (el.dataset.field === 'title') {
+          document.title = (el.textContent.trim() || '링크 디렉터리') + ' :: 숨겨진 링크 디렉터리';
+        }
+        save();
+      }));
+
+      editButton.addEventListener('click', () => {
+        editing = !editing;
+        site.classList.toggle('editing', editing);
+        document.querySelectorAll('.editable').forEach((el) => { el.contentEditable = String(editing); });
+        editButton.textContent = editing ? '편집 완료' : '편집 모드 켜기';
+        addButton.hidden = !editing;
+        document.getElementById('mode-message').textContent = editing ? '편집 중 — 수정 내용은 자동 저장됩니다' : '읽기 전용 보기';
+      });
+
+      addButton.addEventListener('click', () => {
+        const item = makeLink({ text: '새 링크', url: 'https://' }, list.children.length);
+        list.append(item);
+        item.querySelector('.link-label').focus();
+        save();
+      });
+
+      document.getElementById('reset-site').addEventListener('click', () => {
+        if (!confirm('이 브라우저에 저장된 편집 내용을 지우고 기본 내용으로 되돌릴까요?')) return;
+        localStorage.removeItem(STORAGE_KEY);
+        applyData(defaults);
+        status.textContent = '기본 내용으로 초기화했습니다';
+      });
+    })();
+  </script>
 </body>
 </html>
